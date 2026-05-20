@@ -124,7 +124,7 @@ int main(void)
   {
  
     //  remote_control_chassis();
-    can1_one(10000);
+    can1_one(5000);
 		HAL_Delay(1);
 		
     }
