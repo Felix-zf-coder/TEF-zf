@@ -1,18 +1,15 @@
 #include "PID.h"
 #include <math.h>
 
-/** @function PID_Compute 普通PID计算函数
-	* @parameter:     pid 普通PID句柄
-	* @parameter:new_data 新误差
-  */
+#include "bsp_can.h"
+
 
   float PID_Compute(PID_typedef* pid, float new_error)
     {
 	// 历史误差传递
 	float last_error = pid->last_error;
 	pid->last_error = new_error;
-
-  
+	// 积分误差计算
 	if (fabsf(new_error)<50.0f)
 	{
 		pid->Int_error+=new_error*pid->time_const;
@@ -23,9 +20,6 @@
 		
 		pid->Int_error=0.0f;
 	}
-	
-	
-	 
     // PID反馈分量计算
 	float out_p = pid->Kp * new_error;
 	float out_i = pid->Ki * pid->Int_error;
@@ -41,37 +35,27 @@
     }
 
 
-/** @function Low_Pass_PID_Compute 低通滤波PID计算函数
-	* @parameter:      pid 低通滤波PID句柄
-	* @parameter: new_data 新误差
-  */
+	//PID参数定义
+	PID_typedef gimbal_angle_pid = GIMBAL_ANGLE_PID_PARA;
+	//角度误差计算
+	float gimbal_angle_error(float target_angle,float current_angle)
+	{
+		float error = target_angle - current_angle;
+		if(error > 4095.0f)
+		error -= 8191.0f;
+	else if (error < -4095.0f)
+	  error += 8191.0f;
+	 return error;
+	}
+//角度闭环
+	int16_t gimbal_angle_control(float target_angle)
+	{
+		float  current_angle = (float)GIMBAL_CAN1[0].angle;
+		float error = gimbal_angle_error(target_angle,current_angle);
+		int16_t out = (int16_t)PID_Compute(&gimbal_angle_pid,error );
+		return (int16_t)out;
+	}
 
-  float Low_Pass_PID_Compute(
-	Low_Pass_PID_typedef* pid, 
-	float new_error)
-{
-  // 对新误差进行滤波
-	float low_pass_error = pid->forward * pid->last_error + (1-pid->forward) * new_error;
-	
 
-    // 历史误差传递
-	float last_error = pid->last_error;
-	pid->last_error = low_pass_error;
-	
-    // 积分计算与限制
-	pid->Int_error += low_pass_error * pid->time_const;
-	if(pid->Int_error > pid->max_Int)pid->Int_error = pid->max_Int;
-	if(pid->Int_error < -pid->max_Int)pid->Int_error = -pid->max_Int;
-	
-    // PID反馈分量计算
-	float out_p = pid->Kp * low_pass_error;
-	float out_i = pid->Ki * pid->Int_error;
-	float out_d = pid->Kd * (low_pass_error - last_error) / pid->time_const;
-	
-    // 反馈和
-	float out = out_p + out_i + out_d;
-    // 限制并输出
-	return out > pid->max_out ? pid->max_out : (out < -pid->max_out ? -pid->max_out : out);
-}
 
 
