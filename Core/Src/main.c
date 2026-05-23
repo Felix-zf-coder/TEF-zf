@@ -124,8 +124,9 @@ int main(void)
   {
  
     //  remote_control_chassis();
-    int16_t voltage = gimbal_angle_control(4000.0f);
+     int16_t voltage = gimbal_angle_control(600.0f);
     can1_one(voltage);
+    // can1_one(10000);
 		HAL_Delay(1);
 		
     }

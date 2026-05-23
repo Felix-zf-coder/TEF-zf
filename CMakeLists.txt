@@ -49,8 +49,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     APP/pid.c
     APP/remote_control.c
     BSP/bsp_can.c
-    APP/JY901.c
-    APP/JY901.h
+    APP/WT901.c
+    APP/WT901.h
 # Add user sources here
 )
 
