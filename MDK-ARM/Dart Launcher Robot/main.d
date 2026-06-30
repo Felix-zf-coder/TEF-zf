@@ -42,10 +42,9 @@ dart launcher robot\main.o: ../Core/Inc/usart.h
 dart launcher robot\main.o: ../Core/Inc/gpio.h
 dart launcher robot\main.o: ../BSP/bsp_can.h
 dart launcher robot\main.o: ../APP/pid.h
-dart launcher robot\main.o: ../APP/motor_control.h
+dart launcher robot\main.o: ../APP/gimbal_motor.h
 dart launcher robot\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 dart launcher robot\main.o: ../APP/remote_control.h
 dart launcher robot\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 dart launcher robot\main.o: ../APP/chassis_behaviour.h
-dart launcher robot\main.o: ../APP/motor_control.h
 dart launcher robot\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

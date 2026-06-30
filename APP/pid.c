@@ -10,7 +10,7 @@
 	float last_error = pid->last_error;
 	pid->last_error = new_error;
 	// 积分误差计算
-	if (fabsf(new_error)<50.0f)
+	if (fabsf(new_error)<100.0f)
 	{
 		pid->Int_error+=new_error*pid->time_const;
 		if(pid->Int_error > pid->max_Int)pid->Int_error = pid->max_Int;

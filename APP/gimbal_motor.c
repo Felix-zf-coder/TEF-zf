@@ -2,8 +2,11 @@
 #include "pid.h"
 #include "bsp_can.h"
 #include "remote_control.h"
- 
- 
+#include "vofa.h"
+
+
+#define  SA_THRESHOLD   300
+
     //PID参数定义
 	PID_typedef gimbal_angle_pid = GIMBAL_ANGLE_PID_PARA;
 	PID_typedef gimbal_speed_pid = GIMBAL_SPEED_PID_PARA;
@@ -29,13 +32,29 @@
 		
 		 // 内环：转速误差 → 电压
 		float speed_error = target_speed - current_speed;
-		float out = PID_Compute(&gimbal_speed_pid, speed_error);
+		float voltage_cmd = PID_Compute(&gimbal_speed_pid, speed_error);
 
-		return (int16_t)out;
+		return (int16_t)voltage_cmd;
 	}
 
 
+float get_sa_target_speed(void)
+{
+    if(rc_ctrl.rc.SA < -SA_THRESHOLD)
+	{
+		return vofa_target_speed;
 
+	}
+	else if (rc_ctrl.rc.SA > SA_THRESHOLD)
+	{
+		return -vofa_target_speed;
+	}
+	else 
+	{
+		return 0.0f;
+	}
+
+}
 
 
 

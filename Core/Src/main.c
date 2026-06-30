@@ -33,6 +33,10 @@
 #include "stdio.h"
 #include "remote_control.h"
 #include "chassis_behaviour.h"
+#include "arm_math.h"
+#include <math.h>
+#include <stdio.h>
+#include "vofa.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,11 +110,11 @@ int main(void)
   MX_RTC_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_USART6_UART_Init();
+  MX_UART7_Init();
   /* USER CODE BEGIN 2 */
-	can_filter_init();
-
-
-
+	 can_filter_init();
+   vofa_init();   // 加这一行
 	remote_control_init();
 	//������ʱ
   HAL_Delay(500);
@@ -120,21 +124,31 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+
   while (1)
   {
  
-    //  remote_control_chassis();
-     int16_t voltage = gimbal_angle_control(600.0f);
+    // //  remote_control_chassis();
+    //  int16_t voltage = gimbal_angle_control(600.0f);
+    // can1_one(voltage);
+    // // can1_one(10000);
+		// HAL_Delay(1);
+    // float target_speed = vofa_target_speed;
+    float target_speed = get_sa_target_speed();
+    float current_speed = (float)GIMBAL_CAN1[0].speed_rpm;
+    float error = target_speed - current_speed;
+    int16_t voltage = (int16_t)PID_Compute(&gimbal_speed_pid, error);
     can1_one(voltage);
-    // can1_one(10000);
-		HAL_Delay(1);
-		
+    vofa_send(target_speed, current_speed, voltage);
+
+    HAL_Delay(5);
     }
 	
 
 
 
-    /* USER CODE END WHILE */
+    /* USER CODE END WHILE */       
 
     /* USER CODE BEGIN 3 */
   

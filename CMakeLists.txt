@@ -27,6 +27,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 # Core project settings
 project(${CMAKE_PROJECT_NAME} C CXX ASM)
 message("Build type: " ${CMAKE_BUILD_TYPE})
+add_compile_options(
+    -mcpu=cortex-m4
+    -mthumb
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
+    -Ofast
+)
+
+add_definitions(
+
+)
 
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
@@ -39,7 +50,8 @@ add_subdirectory(cmake/stm32cubemx)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined library search paths
+${CMAKE_SOURCE_DIR}/Middlewares/ST/ARM/DSP/Lib    
+# Add user defined library search paths
 )
 
 # Add sources to executable
@@ -51,6 +63,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     BSP/bsp_can.c
     APP/WT901.c
     APP/WT901.h
+    BSP/vofa.h
+    BSP/vofa.c
 # Add user sources here
 )
 
@@ -58,6 +72,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
   APP  
   BSP
+Middlewares/ST/ARM/DSP/Inc
 # Add user defined include paths
 )
 
@@ -70,8 +85,13 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
 # Add linked libraries
+
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -u _printf_float
+)
+
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-
+    arm_cortexM4lf_math
     # Add user defined libraries
 )

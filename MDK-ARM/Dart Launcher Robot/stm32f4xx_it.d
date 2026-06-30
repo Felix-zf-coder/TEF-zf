@@ -35,3 +35,5 @@ dart launcher robot\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4x
 dart launcher robot\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 dart launcher robot\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 dart launcher robot\stm32f4xx_it.o: ../Core/Inc/stm32f4xx_it.h
+dart launcher robot\stm32f4xx_it.o: ../APP/remote_control.h
+dart launcher robot\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

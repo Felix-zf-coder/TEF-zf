@@ -37,4 +37,5 @@ dart launcher robot\remote_control.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f
 dart launcher robot\remote_control.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 dart launcher robot\remote_control.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 dart launcher robot\remote_control.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-dart launcher robot\remote_control.o: ..\APP\motor_control.h
+dart launcher robot\remote_control.o: ..\APP\gimbal_motor.h
+dart launcher robot\remote_control.o: ..\APP\pid.h

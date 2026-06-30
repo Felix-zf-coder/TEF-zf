@@ -9,7 +9,7 @@
     .Kp = 5.0f, \
     .Ki = 0.02f, \
     .Kd = 0.0f, \
-    .max_out = 5000.0f, \
+    .max_out = 350.0f, \
     .max_Int = 1000.0f, \
     .last_error = 0.0f, \
     .Int_error = 0.0f, \
@@ -18,23 +18,23 @@
 
 #define GIMBAL_SPEED_PID_PARA \
 { \
-	.Kp         =  6.4f, \
-	.Ki         = 0.2f, \
+	.Kp         =88.0f, \
+	.Ki         =45.0f, \
 	.Kd         = 0.0f, \
-	.max_out    = 25000.0f, \
+	.max_out    = 24000.0f, \
 	.max_Int    = 5000.0f, \
 	.last_error =  0.0f, \
 	.Int_error  =  0.0f, \
 	.time_const =  0.001f, \
 }
-	extern PID_typedef gimbal_angle_pid;
+  extern PID_typedef gimbal_angle_pid;
   extern PID_typedef gimbal_speed_pid;
 
 	//角度误差计算
 	float gimbal_angle_error(float target_angle,float current_angle);
 
 	int16_t gimbal_angle_control(float target_angle);
-
+    float get_sa_target_speed(void);
  #endif
 
 

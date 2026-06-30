@@ -39,5 +39,5 @@ dart launcher robot\chassis_behaviour.o: ..\APP\remote_control.h
 dart launcher robot\chassis_behaviour.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 dart launcher robot\chassis_behaviour.o: ..\APP\pid.h
 dart launcher robot\chassis_behaviour.o: ../BSP/bsp_can.h
-dart launcher robot\chassis_behaviour.o: ..\APP\motor_control.h
+dart launcher robot\chassis_behaviour.o: ..\APP\gimbal_motor.h
 dart launcher robot\chassis_behaviour.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
