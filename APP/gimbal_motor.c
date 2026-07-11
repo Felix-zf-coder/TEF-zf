@@ -10,6 +10,20 @@
     //PID参数定义
 	PID_typedef gimbal_angle_pid = GIMBAL_ANGLE_PID_PARA;
 	PID_typedef gimbal_speed_pid = GIMBAL_SPEED_PID_PARA;
+	
+ float gimbal_angle_format(float angle)
+	{
+		while(angle>=8191.0f)
+		{
+			angle-=8191.0f;
+		}
+        while (angle<0.0f)
+		{
+			angle+=8191.0f;
+		}
+			return angle;
+	}
+
 	//角度误差计算
 	float gimbal_angle_error(float target_angle,float current_angle)
 	{
@@ -23,6 +37,7 @@
 //角度闭环
 	int16_t gimbal_angle_control(float target_angle)
 	{
+		
 		float  current_angle = (float)GIMBAL_CAN1[0].angle;
 		float  current_speed = (float)GIMBAL_CAN1[0].speed_rpm;
 		
@@ -55,7 +70,6 @@ float get_sa_target_speed(void)
 	}
 
 }
-
 
 
 

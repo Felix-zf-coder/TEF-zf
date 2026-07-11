@@ -21,6 +21,8 @@
 #include "can.h"
 #include "dma.h"
 #include "rtc.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_can.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -35,6 +37,7 @@
 #include "chassis_behaviour.h"
 #include "arm_math.h"
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include "vofa.h"
 /* USER CODE END Includes */
@@ -70,7 +73,8 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // float target=2000;
-
+float error;
+int16_t voltage;
 /* USER CODE END 0 */
 
 /**
@@ -113,11 +117,14 @@ int main(void)
   MX_USART6_UART_Init();
   MX_UART7_Init();
   /* USER CODE BEGIN 2 */
-	 can_filter_init();
-   vofa_init();   // 加这一行
+	can_filter_init();
+  vofa_init();   
 	remote_control_init();
 	//������ʱ
   HAL_Delay(500);
+// float zero_angle = (float)GIMBAL_CAN1[0].angle;
+// uint32_t chassis_tick =HAL_GetTick();
+
 
 
   /* USER CODE END 2 */
@@ -130,30 +137,51 @@ int main(void)
   {
  
     // //  remote_control_chassis();
-    //  int16_t voltage = gimbal_angle_control(600.0f);
-    // can1_one(voltage);
-    // // can1_one(10000);
-		// HAL_Delay(1);
-    // float target_speed = vofa_target_speed;
     float target_speed = get_sa_target_speed();
     float current_speed = (float)GIMBAL_CAN1[0].speed_rpm;
-    float error = target_speed - current_speed;
-    int16_t voltage = (int16_t)PID_Compute(&gimbal_speed_pid, error);
+    error = target_speed - current_speed;
+    voltage = (int16_t)PID_Compute(&gimbal_speed_pid, error);
     can1_one(voltage);
-    vofa_send(target_speed, current_speed, voltage);
+vofa_send(target_speed, (float)GIMBAL_CAN1[0].speed_rpm, 0);
+//     float target_angle = 0;
+//     if (rc_ctrl.rc.SD<-300) {
+//     target_angle=GIMBAL_ZERO_ANGLE+GIMBAL_ANGLE_90;
 
-    HAL_Delay(5);
-    }
+//     }
+//   else if (rc_ctrl.rc.SD>300)
+//   {
+//   target_angle=GIMBAL_ZERO_ANGLE-GIMBAL_ANGLE_90;
+
+//   }
+//   else {
+//   target_angle =GIMBAL_ZERO_ANGLE;
+
+//   }
+//   target_angle = gimbal_angle_format(target_angle);
+//   voltage=gimbal_angle_control(target_angle);
+//   can1_one(voltage );
+
+// vofa_send(target_angle, (float)GIMBAL_CAN1[0].angle, (float)voltage);
+
+
+
+
+
+}
+    
+  
+  }
+
 	
 
 
 
-    /* USER CODE END WHILE */       
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   
   /* USER CODE END 3 */
-}
+
 
 /**
   * @brief System Clock Configuration

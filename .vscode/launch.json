@@ -36,7 +36,7 @@
             "stm32cubeprogrammer": "D:/STM32CubeCLT/STM32CubeCLT_1.21.0/STM32CubeProgrammer/bin",
             "liveWatch": {
                 "enabled": true,
-                "samplingInterval": 100
+                "samplingInterval": 1
             }
         }
     ]

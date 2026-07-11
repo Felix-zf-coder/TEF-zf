@@ -31,6 +31,18 @@
 	.time_const =  0.020f, \
 }
 
+#define CHASSIS_FOLLOW_PID_PARA \
+{ \
+    .Kp = 0.001f, \
+    .Ki = 0.0f, \
+    .Kd = 0.0f, \
+    .max_out = 1.5f, \
+    .max_Int = 0.0f, \
+    .last_error = 0.0f, \
+    .Int_error = 0.0f, \
+    .time_const = 0.020f, \
+}
+
 void remote_control_chassis(void);
 void chassis_speed_resolve(float vx,float vy,float w,float*motor_target_rpm );
 void calcuate_four_motors(void);

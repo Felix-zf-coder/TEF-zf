@@ -1,6 +1,12 @@
 
 #include "chassis_behaviour.h"
-#define CHASSIS_MAX_W 2.0f
+#include "bsp_can.h"
+#include "gimbal_motor.h"
+#include "pid.h"
+#include "remote_control.h"
+#define CHASSIS_MAX_W 2.0f 
+#define CHASSIS_SPIN_W 1.5f
+PID_typedef chassis_follow_pid = CHASSIS_FOLLOW_PID_PARA;
 float motor_target_speeds[4] = {0,0,0,0};
 int16_t motor_current[4] = {0,0,0,0};
 float chassis_vx=0.0f;
@@ -47,7 +53,24 @@ void remote_control_chassis(void)
     //
     chassis_vx=(rc_ch3/RC_CH_MAX)*CHASSIS_MAX_SPEED;
     chassis_vy=(rc_ch4/RC_CH_MAX)*CHASSIS_MAX_SPEED;
-    chassis_w=(rc_ch1/RC_CH_MAX)*CHASSIS_MAX_W;
+    // chassis_w=(rc_ch1/RC_CH_MAX)*CHASSIS_MAX_W;
+
+    float rc_W=(rc_ch1/RC_CH_MAX)*CHASSIS_MAX_W;
+    if (rc_ctrl.rc.SC<-300) {
+
+      chassis_w=CHASSIS_SPIN_W;//小陀螺
+
+    }
+else if (rc_ctrl.rc.SC>300) {
+    
+    float  yaw_error=gimbal_angle_error(GIMBAL_ZERO_ANGLE, (float) GIMBAL_CAN1[0].angle);
+    chassis_w=PID_Compute(&chassis_follow_pid,yaw_error);
+
+}
+else {
+    chassis_w=rc_W;
+
+}
 
     //
      chassis_speed_resolve(chassis_vx,chassis_vy,chassis_w,motor_target_speeds);
@@ -55,7 +78,9 @@ void remote_control_chassis(void)
     //
     calcuate_four_motors(); 
 }
-
+//普通模式：chassis_w = 遥控器 Ch1
+//跟随模式：chassis_w = yaw 角度误差 PID 输出
+//小陀螺：chassis_w = 固定旋转速度
 
 // 四电机PID控制器
 PID_typedef motor_pid[4] = {
