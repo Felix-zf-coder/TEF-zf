@@ -21,8 +21,6 @@
 #include "can.h"
 #include "dma.h"
 #include "rtc.h"
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_can.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -40,6 +38,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "vofa.h"
+#include "WT901.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +59,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 
 
 /* USER CODE END PV */
@@ -90,7 +90,6 @@ int main(void)
 
   /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
@@ -116,14 +115,27 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART6_UART_Init();
   MX_UART7_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	can_filter_init();
   vofa_init();   
 	remote_control_init();
+  Wit901c_Init();
+
 	//������ʱ
-  HAL_Delay(500);
+  HAL_Delay(500);//9.5
+  
+/*等待WT901成功解析第一帧*/
+while (wit901c_data.opened==0U) {
+can1_one(0);
+HAL_Delay(1);
+}
+/*此时才记录当前Yaw并启动TIM2*/
+gimbal_imu_yaw_start();
+
+
+// uint32_t imu_last_ok_count = wit_ok_count;
 // float zero_angle = (float)GIMBAL_CAN1[0].angle;
-// uint32_t chassis_tick =HAL_GetTick();
 
 
 
@@ -135,14 +147,45 @@ int main(void)
 
   while (1)
   {
- 
-    // //  remote_control_chassis();
-    float target_speed = get_sa_target_speed();
-    float current_speed = (float)GIMBAL_CAN1[0].speed_rpm;
-    error = target_speed - current_speed;
-    voltage = (int16_t)PID_Compute(&gimbal_speed_pid, error);
-    can1_one(voltage);
-vofa_send(target_speed, (float)GIMBAL_CAN1[0].speed_rpm, 0);
+
+// vofa_send(wit901c_data.angle[0],
+//           wit901c_data.angle[1],
+//           wit901c_data.angle[2]);
+  //  uint32_t now = HAL_GetTick();
+
+  //   // 云台 1ms 控制一次
+  //   if(now - gimbal_tick >= 1)
+  //   {
+  //       gimbal_tick = now;
+
+  //       if(rc_ctrl.rc.SC < -300)   // 小陀螺模式
+  //       {
+  //           voltage = gimbal_angle_control(GIMBAL_ZERO_ANGLE);
+  //           can1_one(voltage);
+  //       }
+  //       else
+  //       {
+  //           can1_one(0);
+  //       }
+  //   }
+
+  //   // 底盘 20ms 控制一次
+  //   if(now - chassis_tick >= 20)
+  //   {
+  //       chassis_tick = now;
+  //       remote_control_chassis();
+  //   }
+  // remote_control_chassis();
+    // float target_speed = get_sa_target_speed();
+    // float current_speed = (float)GIMBAL_CAN1[0].speed_rpm;
+    // error = target_speed - current_speed;
+    // voltage = (int16_t)PID_Compute(&gimbal_speed_pid, error);
+  //  can1_one(voltage);
+// uint32_t now = HAL_GetTick();
+
+
+    // vofa_send(target_speed, (float)GIMBAL_CAN1[0].speed_rpm, 0);
+
 //     float target_angle = 0;
 //     if (rc_ctrl.rc.SD<-300) {
 //     target_angle=GIMBAL_ZERO_ANGLE+GIMBAL_ANGLE_90;
@@ -159,29 +202,22 @@ vofa_send(target_speed, (float)GIMBAL_CAN1[0].speed_rpm, 0);
 //   }
 //   target_angle = gimbal_angle_format(target_angle);
 //   voltage=gimbal_angle_control(target_angle);
-//   can1_one(voltage );
+  // can1_one(voltage);
 
 // vofa_send(target_angle, (float)GIMBAL_CAN1[0].angle, (float)voltage);
 
+ 
 
+  gimbal_imu_yaw_task();
 
-
-
-}
-    
-  
-  }
-
-	
-
-
+	}
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   
   /* USER CODE END 3 */
-
+}
 
 /**
   * @brief System Clock Configuration

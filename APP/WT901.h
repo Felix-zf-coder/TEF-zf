@@ -6,6 +6,7 @@
 #define  TOP_BUF_MAX_LEN 64
 #define TOP_BUF_LEN 11
 //Wit901
+
 typedef struct __Wit901C
 {
     float acc[3],angvel[3],angle[3];
@@ -20,12 +21,20 @@ typedef struct __Wit901C
 #define ANGLE_HEAD (0X53)
 #define RECIPROCAL32768 (3.0517578125e-05f)
 
+
 //
 uint8_t Wit901c_Data_Process(
     uint8_t*data,
     Wit901C*wit901c_data);
 
 
+extern volatile uint8_t wit_dma_status;
+extern volatile uint32_t wit_rx_count;
+extern volatile uint32_t wit_ok_count;   
+extern Wit901C wit901c_data;
+
+void Wit901c_Init(void);
+void Wit901c_RxCplt(void);
 
 #endif
 

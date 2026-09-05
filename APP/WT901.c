@@ -1,6 +1,9 @@
 #include "WT901.h"
+#include "usart.h"
 #include <stdint.h>
-
+volatile uint8_t wit_dma_status = 0xFF;
+volatile uint32_t wit_rx_count = 0;
+volatile uint32_t wit_ok_count = 0;
 //
 uint8_t Wit901c_Data_Process
 (uint8_t*data, Wit901C *wit901c_data)
@@ -46,7 +49,26 @@ switch(data[1]){
 wit901c_data->opened =0x01;
 return 0x00;
 }
+static uint8_t wit901c_rx_buf[TOP_BUF_LEN];
+Wit901C wit901c_data = {0};
 
+void Wit901c_Init(void)
+{
+    wit_dma_status = HAL_UART_Receive_DMA(&huart6,
+                                          wit901c_rx_buf,
+                                          TOP_BUF_LEN);
+}
+
+void Wit901c_RxCplt(void)
+{
+    wit_rx_count++;
+
+    if(Wit901c_Data_Process(wit901c_rx_buf,
+                            &wit901c_data) == 0)
+    {
+        wit_ok_count++;
+    }
+}
 
 
 

@@ -7,13 +7,16 @@
 #include "stdio.h"
 #include "string.h"
 #include <stdint.h>
+#include "WT901.h"
 
 float  vofa_target_speed =50.0f;
 static char buf[64];
 
-// 全局变量，1用于调试
+// 全局变量，用于调试
 volatile uint8_t rx_received = 0;
-static volatile uint8_t tx_busy=0;
+static volatile uint8_t tx_busy = 0;
+volatile uint32_t vofa_tx_ok = 0;
+volatile uint32_t vofa_tx_fail = 0;
 
 // 解析指令
 static void parse_cmd(char *buf)
@@ -81,6 +84,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         }
         HAL_UART_Receive_IT(&huart7, &rx_byte, 1);
     }
+    else if (huart->Instance ==USART6) 
+    {
+
+        Wit901c_RxCplt();
+
+}
+
 }
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef*huart)
 {
@@ -91,4 +101,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef*huart)
         
     
     }
+
+
+    
 }

@@ -14,7 +14,8 @@ static uint8_t GIMBAL_can_send_data[8];//云台发送数据
 void can_filter_init(void)
 {
 
-    CAN_FilterTypeDef can_filter_st;
+CAN_FilterTypeDef can_filter_st={0};
+    can_filter_st.SlaveStartFilterBank = 14;
     can_filter_st.FilterActivation = ENABLE;
     can_filter_st.FilterMode = CAN_FILTERMODE_IDMASK;
     can_filter_st.FilterScale = CAN_FILTERSCALE_32BIT;

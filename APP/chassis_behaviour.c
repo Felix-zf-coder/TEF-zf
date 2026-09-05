@@ -5,7 +5,7 @@
 #include "pid.h"
 #include "remote_control.h"
 #define CHASSIS_MAX_W 2.0f 
-#define CHASSIS_SPIN_W 1.5f
+#define CHASSIS_SPIN_W 0.8f
 PID_typedef chassis_follow_pid = CHASSIS_FOLLOW_PID_PARA;
 float motor_target_speeds[4] = {0,0,0,0};
 int16_t motor_current[4] = {0,0,0,0};
@@ -51,7 +51,7 @@ void remote_control_chassis(void)
     rc_ch1=(fabs(rc_ch1)<RC_DEAD_ZONE)?0.0f:rc_ch1;
 
     //
-    chassis_vx=(rc_ch3/RC_CH_MAX)*CHASSIS_MAX_SPEED;
+    chassis_vx=-(rc_ch3/RC_CH_MAX)*CHASSIS_MAX_SPEED;
     chassis_vy=(rc_ch4/RC_CH_MAX)*CHASSIS_MAX_SPEED;
     // chassis_w=(rc_ch1/RC_CH_MAX)*CHASSIS_MAX_W;
 
